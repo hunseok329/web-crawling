@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-# 프로젝트 오일러 사이트 한국사이터에서 원본 사이트로 변경 중
+import csv
 
 URL = 'http://euler.synap.co.kr/prob_list.php'
 
@@ -34,6 +34,7 @@ def get_problem_word(html):
 
 
 def get_problems(last):
+    problems = []
     for page in range(last):
         result = requests.get(f"{URL}?pg={page+1}")
         soup = BeautifulSoup(result.text, "html.parser")
@@ -42,16 +43,28 @@ def get_problems(last):
         # 문제 타이틀 부분이 같이 크롤링 되어 get_problem_word 부분에서 크롤링이 실패함 clear
         # a 태그를 가져오는 부분에서 None 타입이 있는 부분이 있는데 그부분에서 string 값으로 변환 실패 clear
         # a 태그 안에 다른 태그 들이 포함되어 있는 a 태그가 있어 string 변화에서 NoneTpye 값이 나오게 됨 clear
-        # div 태드 안에 있는 푼 사람 숫자를 가져와야함
+        # div 태드 안에 있는 푼 사람 숫자를 가져와야함 clear
         for word in tr:
             problem = get_problem_word(word)
             if problem is not None:
-                print(problem)
+                problems.append(problem)
+    return problems
 
 
 def get_jobs():
     last_page = get_last_pages()
-    get_problems(int(last_page))
+    problems = get_problems(int(last_page))
+    save_to_file(problems)
+
+
+def save_to_file(problem):
+    file = open("project_Euler@kr.csv", encoding='UTF8', mode="w")
+    writer = csv.writer(file)
+    writer.writerow(["number", "problem", "human"])
+    # 모든 페이지에서 문제번호 문제제목 문제를 푼사람을 크롤링 하여 자료를 수집함 값을 엑셀 파일로 저장하는 단계
+    for word in problem:
+        writer.writerow(list(word.values()))
+    return
 
 
 get_jobs()
