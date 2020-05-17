@@ -58,14 +58,14 @@ def get_jobs():
 
 
 def save_to_file(problem):
-    file = open("project_Euler@kr.csv", encoding='UTF8', mode="w")
+    file = open("project_Euler@kr.csv", encoding='UTF8', mode="w", newline='')
     writer = csv.writer(file)
     writer.writerow(["number", "problem", "human"])
     # 모든 페이지에서 문제번호 문제제목 문제를 푼사람을 크롤링 하여 자료를 수집함 값을 엑셀 파일로 저장하는 단계 clear
     for word in problem:
         writer.writerow(list(word.values()))
     return
-    # csv 파일로 저장될떄 아마도 \n이 있으러 한칸씩 떨어져서 저장되는것 같음
+    # csv 파일로 저장될떄 아마도 \n이 있으러 한칸씩 떨어져서 저장되는것 같음 clear
 
 
 get_jobs()
